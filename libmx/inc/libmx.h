@@ -10,7 +10,6 @@ typedef struct s_list
     struct s_list *next;
 } t_list;
 
-
 //Utils pack
 
 void mx_printchar(char);
@@ -98,3 +97,5 @@ void mx_printerr(const char *s);
 int mx_str_contains(const char *str, const char symb);
 int mx_str_indexof(const char *str, const char symb);
 char **mx_strwsplit(const char *s, const char *delim);
+char *mx_strntcpy(char *dest, const char *from, int f_p, int s_p);
+bool mx_is_str_contain(const char *str, const char ch);

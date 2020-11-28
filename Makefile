@@ -6,7 +6,7 @@ OBJ = obj
 
 INC = inc
 
-FLAGS = -std=c11 -Wall -Wextra -Werror -Wpedantic
+FLAGS = -std=c11 #-Wall -Wextra -Werror -Wpedantic
 
 all: uninstall install
 
