@@ -17,5 +17,7 @@ bool mx_is_file(const char *path);
 bool mx_is_folder(const char *path);
 void mx_print_column(t_dir_info *dir_info);
 t_dir_info *mx_get_files_from_dir(char *dir_path);
-
 t_dir_info *mx_create_dir_info(char **files, int files_count);
+t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags);
+char **mx_string_arr_rm(char **arr, int size, int index);
+int mx_search_hiden_files(t_dir_info *dir_info);

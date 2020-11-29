@@ -14,6 +14,7 @@ bool mx_is_flag_valid(char *flags, const char *flag_list)
 
 bool mx_is_flag_format_valid(char *str)
 {
+    printf("%d\n", mx_strlen(str));
     if (mx_strlen(str) >= 2 && str[0] == '-')
         return true;
     return false;
