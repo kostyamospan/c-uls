@@ -4,7 +4,13 @@
 
 int main(int argc, char **args)
 {
-    const char *valid_flag_list = {"l"};
+    const char valid_flag_list[] = {
+        'l',
+        'a',
+        'A',
+        'R',
+        'r',
+    };
 
     char *dir_name = ".";
     char *file_name;
@@ -19,6 +25,13 @@ int main(int argc, char **args)
         if (mx_is_flag_format_valid(args[1]))
         {
             flags = mx_strntcpy(flags, args[1], 1, mx_strlen(args[1]));
+            char invalid_flag;
+
+            if ((invalid_flag = mx_is_flag_valid(flags, valid_flag_list)) != '\0')
+            {
+                printf("Flag %c is invalid\n", invalid_flag);
+                exit(0);
+            }
 
             if (mx_is_file(args[2]))
             {
@@ -42,6 +55,14 @@ int main(int argc, char **args)
         if (mx_is_flag_format_valid(args[1]))
         {
             flags = mx_strntcpy(flags, args[1], 1, mx_strlen(args[1]));
+
+            char invalid_flag;
+
+            if ((invalid_flag = mx_is_flag_valid(flags, valid_flag_list)) != '\0')
+            {
+                printf("Flag %c is invalid\n", invalid_flag);
+                exit(0);
+            }
         }
         else
         {

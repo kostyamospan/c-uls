@@ -1,20 +1,19 @@
 #include "../inc/uls.h"
 
-bool mx_is_flag_valid(char *flags, const char *flag_list)
+char mx_is_flag_valid(char *flags, const char *valid_flag_list)
 {
     do
     {
-        if (!mx_is_str_contain((char *)flag_list, *flags))
-            return false;
+        if (!mx_is_str_contain((char *)valid_flag_list, *flags))
+            return *flags;
 
     } while (flags++);
 
-    return true;
+    return '\0';
 }
 
 bool mx_is_flag_format_valid(char *str)
 {
-    printf("%d\n", mx_strlen(str));
     if (mx_strlen(str) >= 2 && str[0] == '-')
         return true;
     return false;
