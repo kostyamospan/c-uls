@@ -65,6 +65,10 @@ t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags)
             break;
         case 'r':
             mx_rflag_func(dir_info);
+            break;
+        case 'l':
+            mx_lflag_func(dir_info);
+            break;
         default:
             break;
         }
@@ -114,4 +118,47 @@ void mx_rflag_func(t_dir_info *dir_info)
     {
         swap(&(dir_info->files[i]), &(dir_info->files[j]));
     }
+}
+
+void mx_lflag_func(t_dir_info *dir_info)
+{
+    char **larr = malloc(sizeof(char *) * dir_info->files_length);
+
+    for (int i = 0; i < dir_info->files_length; i++)
+    {
+        struct stat fileStat;
+
+        if (stat(dir_info->files[i], &fileStat) < 0)
+        {
+            printf("error\n");
+            exit(1);
+        }
+        else
+        {
+            char *cur_file_info = mx_strnew(400);
+            mx_strcat(cur_file_info, (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IRUSR) ? "r" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IWUSR) ? "w" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IXUSR) ? "x" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IRGRP) ? "r" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IWGRP) ? "w" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IXGRP) ? "x" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IROTH) ? "r" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IWOTH) ? "w" : "-");
+            mx_strcat(cur_file_info, (fileStat.st_mode & S_IXOTH) ? "x" : "-");
+
+            mx_strcat(cur_file_info, "\t");
+            mx_strcat(cur_file_info, mx_itoa(fileStat.st_nlink));
+            mx_strcat(cur_file_info, "\t");
+            mx_strcat(cur_file_info, mx_itoa(fileStat.st_size));
+            mx_strcat(cur_file_info, "\t");
+            mx_strcat(cur_file_info, mx_itoa(fileStat.st_atime));
+            mx_strcat(cur_file_info, "\t");
+            mx_strcat(cur_file_info, dir_info->files[i]);
+
+            larr[i] = cur_file_info;
+        }
+    }
+
+    dir_info->files = larr;
 }

@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <malloc.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 typedef struct s_dir_info
 {
@@ -26,4 +29,5 @@ int mx_search_string(const char **arr, int arr_size, const char *str);
 
 //flags work
 void mx_Aflag_func(t_dir_info *dir_info);
+void mx_lflag_func(t_dir_info *dir_info);
 void mx_rflag_func(t_dir_info *dir_info);
