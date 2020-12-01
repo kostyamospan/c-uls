@@ -14,7 +14,7 @@ char **mx_strsplit(const char *s, const char *delim)
 		sLen = mx_strlen(s),
 		delimLen = mx_strlen(delim);
 
-	while ((_s = strstr(_s, delim)))
+	while ((_s = mx_strstr(_s, delim)))
 	{
 		_s += delimLen;
 		++nbWords;
@@ -25,10 +25,10 @@ char **mx_strsplit(const char *s, const char *delim)
 	if (data)
 	{
 		*ptrs =
-			_s = strcpy(((char *)data) + ptrsSize, s);
+			_s = mx_strcpy(((char *)data) + ptrsSize, s);
 		if (nbWords > 1)
 		{
-			while ((_s = strstr(_s, delim)))
+			while ((_s = mx_strstr(_s, delim)))
 			{
 				*_s = '\0';
 				_s += delimLen;

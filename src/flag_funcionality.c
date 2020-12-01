@@ -124,6 +124,45 @@ void mx_lflag_func(t_dir_info *dir_info)
 {
     char **larr = malloc(sizeof(char *) * dir_info->files_length);
 
+    // максимальный размер каждого столбца
+    int permissions_lm = 10,
+        nlink_lm = 0,
+        owner_lm = 0,
+        group_lm = 0,
+        size_lm = 0,
+        time_lm = 0;
+
+    for (int i = 0; i < dir_info->files_length; i++)
+    {
+        struct stat fileStat;
+        int cur_len;
+
+        if (stat(dir_info->files[i], &fileStat) < 0)
+        {
+            printf("error\n");
+            exit(1);
+        }
+        else
+        {
+            struct passwd *pw = getpwuid(fileStat.st_uid);
+            struct group *gr = getgrgid(fileStat.st_gid);
+
+            if ((cur_len = mx_strlen(mx_itoa(fileStat.st_nlink))) > nlink_lm)
+                nlink_lm = cur_len;
+
+            if ((cur_len = mx_strlen(pw->pw_name)) > owner_lm)
+                owner_lm = cur_len;
+
+            if ((cur_len = mx_strlen(gr->gr_name)) > group_lm)
+                group_lm = cur_len;
+
+            if ((cur_len = mx_strlen(mx_itoa(fileStat.st_size))) > size_lm)
+                size_lm = cur_len;
+        }
+    }
+
+    printf("%d, %d, %d, %d\n", nlink_lm, group_lm, owner_lm, size_lm);
+
     for (int i = 0; i < dir_info->files_length; i++)
     {
         struct stat fileStat;
@@ -135,7 +174,13 @@ void mx_lflag_func(t_dir_info *dir_info)
         }
         else
         {
-            char *cur_file_info = mx_strnew(400);
+            struct passwd *pw = getpwuid(fileStat.st_uid);
+            struct group *gr = getgrgid(fileStat.st_gid);
+
+            int cur_str_size = permissions_lm + group_lm + nlink_lm + owner_lm + size_lm + mx_strlen(dir_info->files[i]) + 4;
+
+            char *cur_file_info = mx_strnew(cur_str_size);
+
             mx_strcat(cur_file_info, (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
             mx_strcat(cur_file_info, (fileStat.st_mode & S_IRUSR) ? "r" : "-");
             mx_strcat(cur_file_info, (fileStat.st_mode & S_IWUSR) ? "w" : "-");
@@ -147,13 +192,36 @@ void mx_lflag_func(t_dir_info *dir_info)
             mx_strcat(cur_file_info, (fileStat.st_mode & S_IWOTH) ? "w" : "-");
             mx_strcat(cur_file_info, (fileStat.st_mode & S_IXOTH) ? "x" : "-");
 
-            mx_strcat(cur_file_info, "\t");
+            mx_strcat(cur_file_info, " ");
+            // mx_strcat(cur_file_info, mx_create_space_string(nlink_lm - mx_strlen(mx_itoa(fileStat.st_nlink))));
             mx_strcat(cur_file_info, mx_itoa(fileStat.st_nlink));
-            mx_strcat(cur_file_info, "\t");
+            mx_strcat(cur_file_info, " ");
+
+            mx_strcat(cur_file_info, pw->pw_name);
+            mx_strcat(cur_file_info, " ");
+
+            mx_strcat(cur_file_info, gr->gr_name);
+            mx_strcat(cur_file_info, " ");
+
+            // mx_strcat(cur_file_info, mx_create_space_string(size_lm - mx_strlen(mx_itoa(fileStat.st_size))));
             mx_strcat(cur_file_info, mx_itoa(fileStat.st_size));
-            mx_strcat(cur_file_info, "\t");
-            mx_strcat(cur_file_info, mx_itoa(fileStat.st_atime));
-            mx_strcat(cur_file_info, "\t");
+            // mx_strcat(cur_file_info, " ");
+            // mx_strcat(cur_file_info, mx_create_space_string(nlink_lm - mx_strlen(mx_itoa(fileStat.st_nlink))));
+            // mx_strcat(cur_file_info, mx_itoa(fileStat.st_atime));
+            printf("%s\n", ctime(&(fileStat.st_mtime)));
+            t_time *time = mx_parse_time_str((const char *)ctime(&(fileStat.st_mtime)));
+
+            printf("%s %s %d %d:%d:%d %d",
+                   time->day_of_week,
+                   time->month,
+                   time->day,
+                   time->hours,
+                   time->minutes,
+                   time->seconds,
+                   time->year);
+            // int seconds = time / 60;
+
+            mx_strcat(cur_file_info, " ");
             mx_strcat(cur_file_info, dir_info->files[i]);
 
             larr[i] = cur_file_info;
@@ -161,4 +229,14 @@ void mx_lflag_func(t_dir_info *dir_info)
     }
 
     dir_info->files = larr;
+}
+
+char *mx_create_space_string(int size)
+{
+    char *str = mx_strnew(size);
+    for (int i = 0; i < size; i++)
+    {
+        str[i] = ' ';
+    }
+    return str;
 }
