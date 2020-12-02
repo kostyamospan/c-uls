@@ -1,5 +1,4 @@
 #include "../inc/uls.h"
-#include <string.h>
 
 void mx_string_arr_rm(char ***arr, int size, int index)
 {

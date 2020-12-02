@@ -12,3 +12,10 @@ bool mx_sort_asc(char *a, char *b)
 {
     return mx_strcmp(a, b) > 0;
 }
+
+void mx_swap(void **a, void **b)
+{
+    void *c = *a;
+    *a = *b;
+    *b = c;
+}

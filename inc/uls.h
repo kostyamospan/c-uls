@@ -10,6 +10,8 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+#include <stdio.h>
+#include <dirent.h>
 
 typedef struct s_dir_info
 {
