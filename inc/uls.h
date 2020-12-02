@@ -39,9 +39,12 @@ t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags);
 void mx_string_arr_rm(char ***arr, int size, int index);
 int mx_search_hiden_files(t_dir_info *dir_info);
 int mx_search_string(const char **arr, int arr_size, const char *str);
-char *mx_create_space_string(int size);
 t_time *mx_parse_time_str(const char *str);
+void mx_swap(void **a, void **b);
 
+//sort utils
+void mx_sort_str_arr(char ***arr, int size, bool (*f)(char *, char *));
+bool mx_sort_asc(char *a, char *b);
 
 //constructors
 t_time *mx_create_time(char *day_of_week, char *month, int day, int hours, int minutes, int seconds, int year);
