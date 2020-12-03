@@ -1,6 +1,6 @@
 #include "../inc/uls.h"
 
-char mx_is_flag_valid(char *flags, const char *valid_flag_list)
+char mx_is_flag_availible(char *flags, const char *valid_flag_list)
 {
     do
     {
@@ -12,9 +12,10 @@ char mx_is_flag_valid(char *flags, const char *valid_flag_list)
     return '\0';
 }
 
-bool mx_is_flag_format_valid(char *str)
+bool mx_is_flag(char *str)
 {
     if (mx_strlen(str) >= 2 && str[0] == '-')
         return true;
+
     return false;
 }

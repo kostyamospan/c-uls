@@ -30,8 +30,8 @@ typedef struct s_time
     int year;
 } t_time;
 
-bool mx_is_flag_format_valid(char *str);
-char mx_is_flag_valid(char *flags, const char *valid_flag_list);
+bool mx_is_flag(char *str);
+char mx_is_flag_availible(char *flags, const char *valid_flag_list);
 void mx_lflag_func();
 bool mx_is_file(const char *path);
 bool mx_is_folder(const char *path);
@@ -43,7 +43,7 @@ int mx_search_hiden_files(t_dir_info *dir_info);
 int mx_search_string(const char **arr, int arr_size, const char *str);
 t_time *mx_parse_time_str(const char *str);
 void mx_swap(void **a, void **b);
-
+int mx_strlen_space(char *str);
 //sort utils
 void mx_sort_str_arr(char ***arr, int size, bool (*f)(char *, char *));
 bool mx_sort_asc(char *a, char *b);
@@ -56,3 +56,8 @@ t_dir_info *mx_create_dir_info(char **files, int files_count);
 void mx_Aflag_func(t_dir_info *dir_info);
 void mx_lflag_func(t_dir_info *dir_info);
 void mx_rflag_func(t_dir_info *dir_info);
+
+//error utils
+void mx_print_invalid_flag_err(char flag);
+void mx_print_usage();
+void mx_print_invalid_file(char *name);

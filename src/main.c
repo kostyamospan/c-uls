@@ -12,93 +12,95 @@ int main(int argc, char **args)
         'r',
     };
 
-    char *dir_name = ".";
-    char *file_name;
+    char *flags = NULL;
 
-    char *flags;
+    char **dir_and_files;
+    int dir_and_files_count = 0;
 
-    bool is_folder = true;
-    bool is_file = false;
-
-    if (argc == 3)
+    if (argc >= 2)
     {
-        if (mx_is_flag_format_valid(args[1]))
-        {
-            flags = mx_strntcpy(flags, args[1], 1, mx_strlen(args[1]));
-            char invalid_flag;
-
-            if ((invalid_flag = mx_is_flag_valid(flags, valid_flag_list)) != '\0')
-            {
-                printf("Flag %c is invalid\n", invalid_flag);
-                exit(0);
-            }
-
-            if (mx_is_file(args[2]))
-            {
-                file_name = args[2];
-                is_file = true;
-                is_folder = false;
-            }
-            else if (mx_is_folder(args[2]))
-            {
-                dir_name = args[2];
-            }
-            else
-            {
-                printf("not file or dir\n");
-                exit(1);
-            }
-        }
-    }
-    else if (argc == 2)
-    {
-        if (mx_is_flag_format_valid(args[1]))
+        if (mx_is_flag(args[1]))
         {
             flags = mx_strntcpy(flags, args[1], 1, mx_strlen(args[1]));
 
             char invalid_flag;
 
-            if ((invalid_flag = mx_is_flag_valid(flags, valid_flag_list)) != '\0')
+            if ((invalid_flag = mx_is_flag_availible(flags, valid_flag_list)) != '\0')
             {
-                printf("Flag %c is invalid\n", invalid_flag);
+                mx_print_invalid_flag_err(invalid_flag);
                 exit(0);
             }
         }
-        else
+
+        if (flags == NULL)
         {
-            if (mx_is_file(args[1]))
-            {
-                file_name = args[1];
-                is_file = true;
-            }
-            else if (mx_is_folder(args[1]))
-            {
-                dir_name = args[1];
-                is_folder = true;
-            }
+            dir_and_files = &(args[1]);
+            dir_and_files_count = argc - 1;
+        }
+        else if (argc >= 3)
+        {
+            dir_and_files = &(args[2]);
+            dir_and_files_count = argc - 2;
         }
     }
-    else if (argc != 1)
-    {
-        return 1;
-    }
 
-    if (is_file)
+    flags = flags == NULL ? "" : flags;
+
+    if (dir_and_files_count >= 1)
     {
-        printf("file work\n");
+        t_dir_info *dir_info;
+        int files_count = 0;
+        char **files;
+
+        for (int i = 0; i < dir_and_files_count; i++)
+        {
+            if (mx_is_file(dir_and_files[i]))
+            {
+                files_count++;
+            }
+            else if (!mx_is_folder(dir_and_files[i]))
+            {
+                mx_print_invalid_file(dir_and_files[i]);
+            }
+        }
+
+        int j = 0;
+        files = malloc(files_count * sizeof(char *));
+
+        for (int i = 0; i < dir_and_files_count; i++)
+        {
+            if (mx_is_file(dir_and_files[i]))
+            {
+                files[j] = dir_and_files[i];
+                j++;
+            }
+        }
+        dir_info = mx_create_dir_info(files, files_count);
+
+        dir_info = mx_process_files_flag(dir_info, flags);
+        mx_print_column(dir_info);
+
+        for (int i = 0; i < dir_and_files_count; i++)
+        {
+
+            if (mx_is_folder(dir_and_files[i]))
+            {
+                printf("%s:\n", dir_and_files[i]);
+
+                dir_info = mx_get_files_from_dir(dir_and_files[i]);
+                dir_info = mx_process_files_flag(dir_info, flags);
+                mx_print_column(dir_info);
+            }
+            if (dir_and_files_count - i != 1)
+                printf("\n");
+        }
     }
     else
     {
-        if (mx_is_str_contain(flags, 'R'))
-        {
-            printf("R flag\n");
-        }
-        else
-        {
-            t_dir_info *dir_info = mx_get_files_from_dir(dir_name);
-            dir_info = mx_process_files_flag(dir_info, flags);
-            mx_print_column(dir_info);
-        }
+        t_dir_info *dir_info;
+        dir_info = mx_get_files_from_dir(".");
+        dir_info = mx_process_files_flag(dir_info, flags);
+        mx_print_column(dir_info);
     }
 
     return 0;
