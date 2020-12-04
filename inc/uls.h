@@ -17,6 +17,7 @@ typedef struct s_dir_info
 {
     char **files;
     int files_length;
+    bool is_single_files;
 } t_dir_info;
 
 typedef struct s_time
@@ -44,13 +45,14 @@ int mx_search_string(const char **arr, int arr_size, const char *str);
 t_time *mx_parse_time_str(const char *str);
 void mx_swap(void **a, void **b);
 int mx_strlen_space(char *str);
+int mx_montstr_to_num(const char *str);
 //sort utils
 void mx_sort_str_arr(char ***arr, int size, bool (*f)(char *, char *));
 bool mx_sort_asc(char *a, char *b);
 
 //constructors
 t_time *mx_create_time(char *day_of_week, char *month, int day, int hours, int minutes, int seconds, int year);
-t_dir_info *mx_create_dir_info(char **files, int files_count);
+t_dir_info *mx_create_dir_info(char **files, int files_count, bool is_single_files);
 
 //flags work
 void mx_Aflag_func(t_dir_info *dir_info);

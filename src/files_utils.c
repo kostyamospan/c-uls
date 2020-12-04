@@ -32,7 +32,7 @@ t_dir_info *mx_get_files_from_dir(char *dir_path)
 
     closedir(d);
     mx_sort_str_arr(&files, files_count, &mx_sort_asc);
-    return mx_create_dir_info(files, files_count);
+    return mx_create_dir_info(files, files_count, false);
 }
 
 t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags)
@@ -40,13 +40,16 @@ t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags)
     char cur_flag;
     int i;
 
-    if (mx_str_contains(flags, 'A') == -1 && mx_str_contains(flags, 'a') == -1)
+    if (!dir_info->is_single_files)
     {
-        while ((i = mx_search_hiden_files(dir_info)) > -1)
+        if (mx_str_contains(flags, 'A') == -1 && mx_str_contains(flags, 'a') == -1)
         {
-            mx_string_arr_rm(&(dir_info->files), dir_info->files_length, i);
-            if (dir_info->files_length > 0)
-                dir_info->files_length -= 1;
+            while ((i = mx_search_hiden_files(dir_info)) > -1)
+            {
+                mx_string_arr_rm(&(dir_info->files), dir_info->files_length, i);
+                if (dir_info->files_length > 0)
+                    dir_info->files_length -= 1;
+            }
         }
     }
 

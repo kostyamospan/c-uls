@@ -48,51 +48,55 @@ int main(int argc, char **args)
 
     if (dir_and_files_count >= 1)
     {
+        bool was_error = false;
         t_dir_info *dir_info;
         int files_count = 0;
         char **files;
 
         for (int i = 0; i < dir_and_files_count; i++)
         {
-            if (mx_is_file(dir_and_files[i]))
+            if (mx_is_file(mx_strdup(dir_and_files[i])))
             {
                 files_count++;
             }
-            else if (!mx_is_folder(dir_and_files[i]))
+            else if (!mx_is_folder(mx_strdup(dir_and_files[i])))
             {
                 mx_print_invalid_file(dir_and_files[i]);
             }
         }
 
-        int j = 0;
         files = malloc(files_count * sizeof(char *));
+        int j = 0;
 
         for (int i = 0; i < dir_and_files_count; i++)
         {
-            if (mx_is_file(dir_and_files[i]))
+            if (mx_is_file(mx_strdup(dir_and_files[i])))
             {
-                files[j] = dir_and_files[i];
+                files[j] = mx_strdup(dir_and_files[i]);
                 j++;
             }
         }
-        dir_info = mx_create_dir_info(files, files_count);
-
+        /*         if (was_error && )
+        {
+        }
+ */
+        dir_info = mx_create_dir_info(files, files_count, true);
         dir_info = mx_process_files_flag(dir_info, flags);
         mx_print_column(dir_info);
 
         for (int i = 0; i < dir_and_files_count; i++)
         {
-
-            if (mx_is_folder(dir_and_files[i]))
+            if (mx_is_folder(mx_strdup(dir_and_files[i])))
             {
-                printf("%s:\n", dir_and_files[i]);
+                printf("\n%s:\n", dir_and_files[i]);
 
-                dir_info = mx_get_files_from_dir(dir_and_files[i]);
+                dir_info = mx_get_files_from_dir(mx_strdup(dir_and_files[i]));
                 dir_info = mx_process_files_flag(dir_info, flags);
                 mx_print_column(dir_info);
+
+                /* if (dir_and_files_count - i != 1)
+                    printf("\n"); */
             }
-            if (dir_and_files_count - i != 1)
-                printf("\n");
         }
     }
     else

@@ -33,6 +33,8 @@ void mx_rflag_func(t_dir_info *dir_info)
 
 void mx_lflag_func(t_dir_info *dir_info)
 {
+    int incr = dir_info->is_single_files ? 0 : 1;
+
     struct passwd *pw;
     struct group *gr;
     struct stat fileStat;
@@ -43,7 +45,7 @@ void mx_lflag_func(t_dir_info *dir_info)
 
     t_time *time_cur = mx_parse_time_str((const char *)ctime(&time_ob));
 
-    char **larr = malloc(sizeof(char *) * (dir_info->files_length + 0));
+    char **larr = malloc(sizeof(char *) * (dir_info->files_length + incr));
 
     // максимальный размер каждого столбца
     int permissions_lm = 10,
@@ -55,14 +57,14 @@ void mx_lflag_func(t_dir_info *dir_info)
 
     int total_block_size = 0;
 
-    for (int i = 0; i < dir_info->files_length; i++)
+    for (int i = incr; i < dir_info->files_length; i++)
     {
 
         int cur_len;
 
         stat(dir_info->files[i], &fileStat);
 
-        // total_block_size += (int)(fileStat.st_blksize);
+        total_block_size += (int)(fileStat.st_blocks);
 
         time_mod = mx_parse_time_str((const char *)ctime(&(fileStat.st_mtime)));
 
@@ -83,14 +85,18 @@ void mx_lflag_func(t_dir_info *dir_info)
 
         time_or_year_lm = time_mod->day == time_cur->day ? 5 : 4;
     }
-    /*  char *total_blocks_str = mx_strnew(5 + mx_strlen(mx_itoa(total_block_size)));
 
-    mx_strcat(total_blocks_str, "total ");
-    mx_strcat(total_blocks_str, mx_itoa(total_block_size));
- 
-    larr[0] = total_blocks_str;*/
+    if (incr)
+    {
+        total_block_size /= 2;
+        char *total_blocks_str = mx_strnew(5 + mx_strlen(mx_itoa(total_block_size)));
 
-    for (int i = 0; i < dir_info->files_length; i++)
+        mx_strcat(total_blocks_str, "total ");
+        mx_strcat(total_blocks_str, mx_itoa(total_block_size));
+        larr[0] = total_blocks_str;
+    }
+
+    for (int i = incr; i < dir_info->files_length; i++)
     {
         stat(dir_info->files[i], &fileStat);
 
@@ -138,10 +144,12 @@ void mx_lflag_func(t_dir_info *dir_info)
             mx_strcat(cur_file_info, " ");
         mx_strcat(cur_file_info, mx_itoa(time_mod->day));
 
-        for (int i = 0; i < (time_mod->day == time_cur->day ? 1 : 2); i++)
+        for (int i = 0; i <
+                        (time_mod->year == time_cur->year ? (mx_montstr_to_num(time_cur->month) - mx_montstr_to_num(time_mod->month) < 6 ? 1 : 2) : 2);
+             i++)
             mx_strcat(cur_file_info, " ");
 
-        if (time_mod->day == time_cur->day)
+        if ((time_mod->year == time_cur->year && (mx_montstr_to_num(time_cur->month) - mx_montstr_to_num(time_mod->month) < 6)))
         {
             if (time_mod->hours < 10)
                 mx_strcat(cur_file_info, "0");
