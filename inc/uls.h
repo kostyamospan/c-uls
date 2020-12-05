@@ -18,7 +18,15 @@ typedef struct s_dir_info
     char **files;
     int files_length;
     bool is_single_files;
+    char *cur_dir_name;
 } t_dir_info;
+
+enum DateTimeMode
+{
+    MODIFICATION_TIME,
+    CREATION_TIME,
+    ACCESS_TIME
+};
 
 typedef struct s_time
 {
@@ -46,18 +54,27 @@ t_time *mx_parse_time_str(const char *str);
 void mx_swap(void **a, void **b);
 int mx_strlen_space(char *str);
 int mx_montstr_to_num(const char *str);
+char *mx_strconcant_new(const char *str1, const char *str2);
+
 //sort utils
-void mx_sort_str_arr(char ***arr, int size, bool (*f)(char *, char *));
+void mx_sort_str_arr(char ***arr, int size, char *dir_name, bool (*f)(char *, char *));
 bool mx_sort_asc(char *a, char *b);
+bool mx_sortf_modt(char *a, char *b);
+bool mx_sortf_size(char *a, char *b);
+bool mx_sortf_acct(char *a, char *b);
+int mx_timecmp(t_time *t1, t_time *t2);
 
 //constructors
 t_time *mx_create_time(char *day_of_week, char *month, int day, int hours, int minutes, int seconds, int year);
-t_dir_info *mx_create_dir_info(char **files, int files_count, bool is_single_files);
+t_dir_info *mx_create_dir_info(char **files, int files_count, bool is_single_files, char *cur_dir_name);
 
 //flags work
+void mx_lflag_func(t_dir_info *dir_info, enum DateTimeMode date_time_mode);
 void mx_Aflag_func(t_dir_info *dir_info);
-void mx_lflag_func(t_dir_info *dir_info);
 void mx_rflag_func(t_dir_info *dir_info);
+void mx_tflag_func(t_dir_info *dir_info);
+void mx_Sflag_func(t_dir_info *dir_info);
+void mx_uflag_func(t_dir_info *dir_info);
 
 //error utils
 void mx_print_invalid_flag_err(char flag);

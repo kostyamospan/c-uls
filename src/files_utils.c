@@ -31,8 +31,8 @@ t_dir_info *mx_get_files_from_dir(char *dir_path)
     }
 
     closedir(d);
-    mx_sort_str_arr(&files, files_count, &mx_sort_asc);
-    return mx_create_dir_info(files, files_count, false);
+    mx_sort_str_arr(&files, files_count, dir_path, &mx_sort_asc);
+    return mx_create_dir_info(files, files_count, false, dir_path);
 }
 
 t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags)
@@ -53,27 +53,42 @@ t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags)
         }
     }
 
-    i = 0;
-
-    while ((cur_flag = flags[i++]))
+    if (mx_str_contains(flags, 'A') > 0)
     {
-        switch (cur_flag)
-        {
-        case 'a':
-            break;
-        case 'A':
+        if (mx_str_contains(flags, 'a') == -1)
             mx_Aflag_func(dir_info);
-            break;
-        case 'r':
-            mx_rflag_func(dir_info);
-            break;
-        case 'l':
-            mx_lflag_func(dir_info);
-            break;
-        default:
-            break;
+    }
+    if (mx_str_contains(flags, 't') > 0)
+    {
+        mx_tflag_func(dir_info);
+    }
+    if (mx_str_contains(flags, 'S') > 0)
+    {
+        mx_Sflag_func(dir_info);
+    }
+    if (mx_str_contains(flags, 'r') > 0)
+    {
+        mx_rflag_func(dir_info);
+    }
+    if (mx_str_contains(flags, 'u') > 0 && mx_str_contains(flags, 'l') == -1)
+    {
+        mx_uflag_func(dir_info);
+    }
+    if (mx_str_contains(flags, 'l') > 0)
+    {
+        if (mx_str_contains(flags, 'u') > 0)
+        {
+            if (mx_str_contains(flags, 't') > 0)
+            {
+                mx_uflag_func(dir_info);
+            }
+
+            mx_lflag_func(dir_info, ACCESS_TIME);
+        }
+        else
+        {
+            mx_lflag_func(dir_info, MODIFICATION_TIME);
         }
     }
-
     return dir_info;
 }

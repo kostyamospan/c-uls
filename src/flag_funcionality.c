@@ -31,7 +31,22 @@ void mx_rflag_func(t_dir_info *dir_info)
     }
 }
 
-void mx_lflag_func(t_dir_info *dir_info)
+void mx_tflag_func(t_dir_info *dir_info)
+{
+    mx_sort_str_arr(&(dir_info->files), dir_info->files_length, dir_info->cur_dir_name, &mx_sortf_modt);
+}
+
+void mx_Sflag_func(t_dir_info *dir_info)
+{
+    mx_sort_str_arr(&(dir_info->files), dir_info->files_length, dir_info->cur_dir_name, &mx_sortf_size);
+}
+
+void mx_uflag_func(t_dir_info *dir_info)
+{
+    mx_sort_str_arr(&(dir_info->files), dir_info->files_length, dir_info->cur_dir_name, &mx_sortf_acct);
+}
+
+void mx_lflag_func(t_dir_info *dir_info, enum DateTimeMode date_time_mode)
 {
     int incr = dir_info->is_single_files ? 0 : 1;
 
@@ -56,17 +71,21 @@ void mx_lflag_func(t_dir_info *dir_info)
         time_or_year_lm = 0;
 
     int total_block_size = 0;
+    char *cur_name;
 
-    for (int i = incr; i < dir_info->files_length; i++)
+    for (int i = 0; i < dir_info->files_length; i++)
     {
+        char *tmp = mx_strconcant_new(dir_info->cur_dir_name, "/");
+        cur_name = mx_strconcant_new(tmp, dir_info->files[i]);
 
         int cur_len;
 
-        stat(dir_info->files[i], &fileStat);
+        stat(cur_name, &fileStat);
 
         total_block_size += (int)(fileStat.st_blocks);
 
-        time_mod = mx_parse_time_str((const char *)ctime(&(fileStat.st_mtime)));
+        time_t show_time = date_time_mode == ACCESS_TIME ? fileStat.st_atime : fileStat.st_mtime;
+        time_mod = mx_parse_time_str((const char *)ctime(&(show_time)));
 
         pw = getpwuid(fileStat.st_uid);
         gr = getgrgid(fileStat.st_gid);
@@ -84,6 +103,8 @@ void mx_lflag_func(t_dir_info *dir_info)
             size_lm = cur_len;
 
         time_or_year_lm = time_mod->day == time_cur->day ? 5 : 4;
+
+        free(cur_name);
     }
 
     if (incr)
@@ -96,13 +117,18 @@ void mx_lflag_func(t_dir_info *dir_info)
         larr[0] = total_blocks_str;
     }
 
-    for (int i = incr; i < dir_info->files_length; i++)
+    for (int i = 0; i < dir_info->files_length; i++)
     {
-        stat(dir_info->files[i], &fileStat);
+        char *tmp = mx_strconcant_new(dir_info->cur_dir_name, "/");
+        cur_name = mx_strconcant_new(tmp, dir_info->files[i]);
+
+        stat(cur_name, &fileStat);
 
         pw = getpwuid(fileStat.st_uid);
         gr = getgrgid(fileStat.st_gid);
-        time_mod = mx_parse_time_str((const char *)ctime(&(fileStat.st_mtime)));
+
+        time_t show_time = date_time_mode == ACCESS_TIME ? fileStat.st_atime : fileStat.st_mtime;
+        time_mod = mx_parse_time_str((const char *)ctime(&(show_time)));
 
         char *nlink_str = mx_itoa((int)fileStat.st_nlink);
         char *file_size_str = mx_itoa((int)fileStat.st_size);
@@ -170,8 +196,12 @@ void mx_lflag_func(t_dir_info *dir_info)
         mx_strcat(cur_file_info, " ");
         mx_strcat(cur_file_info, dir_info->files[i]);
 
-        larr[i] = cur_file_info;
+        larr[i + incr] = cur_file_info;
+
+        free(tmp);
+        free(cur_name);
     }
 
+    dir_info->files_length += incr;
     dir_info->files = larr;
 }

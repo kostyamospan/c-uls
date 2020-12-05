@@ -10,6 +10,9 @@ int main(int argc, char **args)
         'A',
         'R',
         'r',
+        't',
+        'S',
+        'u',
     };
 
     char *flags = NULL;
@@ -50,7 +53,7 @@ int main(int argc, char **args)
     {
         bool was_error = false;
         t_dir_info *dir_info;
-        int files_count = 0;
+        int files_count = 0, dirs_count = 0;
         char **files;
 
         for (int i = 0; i < dir_and_files_count; i++)
@@ -59,7 +62,11 @@ int main(int argc, char **args)
             {
                 files_count++;
             }
-            else if (!mx_is_folder(mx_strdup(dir_and_files[i])))
+            else if (mx_is_folder(mx_strdup(dir_and_files[i])))
+            {
+                dirs_count++;
+            }
+            else
             {
                 mx_print_invalid_file(dir_and_files[i]);
             }
@@ -76,11 +83,8 @@ int main(int argc, char **args)
                 j++;
             }
         }
-        /*         if (was_error && )
-        {
-        }
- */
-        dir_info = mx_create_dir_info(files, files_count, true);
+
+        dir_info = mx_create_dir_info(files, files_count, true, ".");
         dir_info = mx_process_files_flag(dir_info, flags);
         mx_print_column(dir_info);
 
@@ -88,14 +92,12 @@ int main(int argc, char **args)
         {
             if (mx_is_folder(mx_strdup(dir_and_files[i])))
             {
-                printf("\n%s:\n", dir_and_files[i]);
+                if (files_count != 0 || dirs_count > 1)
+                    printf("\n%s:\n", dir_and_files[i]);
 
                 dir_info = mx_get_files_from_dir(mx_strdup(dir_and_files[i]));
                 dir_info = mx_process_files_flag(dir_info, flags);
                 mx_print_column(dir_info);
-
-                /* if (dir_and_files_count - i != 1)
-                    printf("\n"); */
             }
         }
     }
