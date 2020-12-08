@@ -12,6 +12,17 @@
 #include <time.h>
 #include <stdio.h>
 #include <dirent.h>
+#include <sys/ioctl.h>
+
+#define MX_IS_BLK(mode) (((mode)&S_IFMT) == S_IFBLK)
+#define MX_IS_CHR(mode) (((mode)&S_IFMT) == S_IFCHR)
+#define MX_IS_DIR(mode) (((mode)&S_IFMT) == S_IFDIR)
+#define MX_IS_LNK(mode) (((mode)&S_IFMT) == S_IFLNK)
+#define MX_IS_SOCK(mode) (((mode)&S_IFMT) == S_IFSOCK)
+#define MX_IS_FIFO(mode) (((mode)&S_IFMT) == S_IFIFO)
+#define MX_IS_WHT(mode) (((mode)&S_IFMT) == S_IFWHT)
+#define MX_IS_REG(mode) (((mode)&S_IFMT) == S_IFREG)
+#define MX_IS_EXEC(mode) ((mode)&S_IXUSR)
 
 typedef struct s_dir_info
 {
@@ -42,8 +53,6 @@ typedef struct s_time
 bool mx_is_flag(char *str);
 char mx_is_flag_availible(char *flags, const char *valid_flag_list);
 void mx_lflag_func();
-bool mx_is_file(const char *path);
-bool mx_is_folder(const char *path);
 void mx_print_column(t_dir_info *dir_info);
 t_dir_info *mx_get_files_from_dir(char *dir_path);
 t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags);
@@ -59,6 +68,7 @@ char *mx_strconcant_new(const char *str1, const char *str2);
 //sort utils
 void mx_sort_str_arr(char ***arr, int size, char *dir_name, bool (*f)(char *, char *));
 bool mx_sort_asc(char *a, char *b);
+bool mx_sort_rev(char *a, char *b);
 bool mx_sortf_modt(char *a, char *b);
 bool mx_sortf_size(char *a, char *b);
 bool mx_sortf_acct(char *a, char *b);
@@ -80,3 +90,22 @@ void mx_uflag_func(t_dir_info *dir_info);
 void mx_print_invalid_flag_err(char flag);
 void mx_print_usage();
 void mx_print_invalid_file(char *name);
+
+//obj determination
+/* mode_t mx_getstmode(const char *path);
+bool mx_is_file(const char *path);
+bool mx_is_folder(const char *path);
+bool mx_is_slink(const char *path);
+bool mx_is_chrdv(const char *path);
+bool mx_is_blcdv(const char *path);
+bool mx_is_fifo(const char *path);
+bool mx_is_sock(const char *path); */
+bool mx_is_file(const char *path);
+bool mx_is_folder(const char *path);
+
+//спизженный вывод
+int max_len_names(t_dir_info *dir_info);
+void mx_print_tab(int len, int maxlen);
+void printcols(t_dir_info *dir_info, int rows, int num, int maxlen);
+void print_names(t_dir_info *dir_info, int maxlen, int wincol);
+void mx_print_files(t_dir_info *dir_info, char *flags);

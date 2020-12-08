@@ -25,6 +25,11 @@ bool mx_sort_asc(char *a, char *b)
     return mx_strcmp(a, b) > 0;
 }
 
+bool mx_sort_rev(char *a, char *b)
+{
+    return false;
+}
+
 bool mx_sortf_modt(char *a, char *b)
 {
     struct stat a_st;

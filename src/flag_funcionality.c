@@ -137,6 +137,7 @@ void mx_lflag_func(t_dir_info *dir_info, enum DateTimeMode date_time_mode)
 
         char *cur_file_info = mx_strnew(cur_str_size);
         mx_strcat(cur_file_info, (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
+
         mx_strcat(cur_file_info, (fileStat.st_mode & S_IRUSR) ? "r" : "-");
         mx_strcat(cur_file_info, (fileStat.st_mode & S_IWUSR) ? "w" : "-");
         mx_strcat(cur_file_info, (fileStat.st_mode & S_IXUSR) ? "x" : "-");
