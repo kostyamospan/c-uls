@@ -11,7 +11,7 @@ void mx_sort_str_arr(char ***arr, int size, char *dir_name, bool (*f)(char *, ch
                 char *a_path = mx_strconcant_new(tmp, (*arr)[j + 1]);
 
                 if (!f(a_path, b_path))
-                    mx_swap(&((*arr)[j]), &((*arr)[j + 1]));
+                    mx_swap((void**)(&((*arr)[j])), (void**)(&((*arr)[j + 1])));
 
                 free(tmp);
                 free(b_path);
@@ -27,7 +27,7 @@ bool mx_sort_asc(char *a, char *b)
 
 bool mx_sort_rev(char *a, char *b)
 {
-    return false;
+    return a > b ? false : false;
 }
 
 bool mx_sortf_modt(char *a, char *b)

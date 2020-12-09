@@ -37,7 +37,6 @@ t_dir_info *mx_get_files_from_dir(char *dir_path)
 
 t_dir_info *mx_process_files_flag(t_dir_info *dir_info, char *flags)
 {
-    char cur_flag;
     int i;
 
     if (!dir_info->is_single_files)

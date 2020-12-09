@@ -27,7 +27,7 @@ void mx_rflag_func(t_dir_info *dir_info)
 
     for (int i = 0; i <= j; i++, j--)
     {
-        mx_swap(&(dir_info->files[i]), &(dir_info->files[j]));
+        mx_swap((void**)&(dir_info->files[i]), (void**)&(dir_info->files[j]));
     }
 }
 

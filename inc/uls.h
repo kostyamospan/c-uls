@@ -61,7 +61,6 @@ int mx_search_hiden_files(t_dir_info *dir_info);
 int mx_search_string(const char **arr, int arr_size, const char *str);
 t_time *mx_parse_time_str(const char *str);
 void mx_swap(void **a, void **b);
-int mx_strlen_space(char *str);
 int mx_montstr_to_num(const char *str);
 char *mx_strconcant_new(const char *str1, const char *str2);
 

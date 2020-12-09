@@ -54,7 +54,7 @@ int main(int argc, char **args)
     if (dir_and_files_count >= 1)
     {
         mx_sort_str_arr(&dir_and_files, dir_and_files_count, ".", mx_sort_asc);
-        bool was_error = false;
+        // bool was_error = false;
         int files_count = 0, dirs_count = 0;
         char **files;
 
