@@ -90,7 +90,15 @@ int main(int argc, char **args)
 
         dir_info = mx_create_dir_info(files, files_count, true, ".");
         dir_info = mx_process_files_flag(dir_info, flags);
-        mx_print_files(dir_info, flags);
+
+        if (files_count != 0)
+        {
+            mx_print_files(dir_info, flags);
+            if (dirs_count != 0)
+                mx_printstr("\n");
+        }
+
+        int cur_dir_i = 0;
 
         for (int i = 0; i < dir_and_files_count; i++)
         {
@@ -99,11 +107,13 @@ int main(int argc, char **args)
 
                 if (files_count != 0 || dirs_count > 1)
                 {
-                    mx_printstr("\n");
+                    if (cur_dir_i != 0)
+                        mx_printstr("\n");
                     mx_printstr(dir_and_files[i]);
                     mx_printstr(":\n");
                 }
 
+                cur_dir_i++;
                 dir_info = mx_get_files_from_dir(mx_strdup(dir_and_files[i]));
                 dir_info = mx_process_files_flag(dir_info, flags);
                 mx_print_files(dir_info, flags);

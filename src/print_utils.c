@@ -85,7 +85,7 @@ void mx_print_files(t_dir_info *dir_info, char *flags)
 
     if (isatty(1))
     {
-        if (mx_str_contains(flags, 'l'))
+        if (mx_strlen(flags) >= 1 && mx_str_contains(flags, 'l'))
             mx_print_column(dir_info);
         else
             print_names(dir_info, maxlen, win.ws_col);
